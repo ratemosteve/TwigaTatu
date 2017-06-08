@@ -2,6 +2,7 @@ package com.digitalmatatus.twigatatu;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,6 +29,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.digitalmatatus.twigatatu.Login.applyFontForToolbarTitle;
+
 /**
  * Created by stephineosoro on 31/05/16.
  */
@@ -40,19 +43,32 @@ public class Registration extends AppCompatActivity {
     EditText _password;
     EditText _confirm;
     int succ = 0;
+    protected Typeface mTfRegular;
+    protected Typeface mTfLight;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //        Setting up custom font
+        mTfRegular = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
+        mTfLight = Typeface.createFromAsset(getAssets(), "OpenSans-Light.ttf");
+
         setContentView(R.layout.app_bar_registration);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("Twiga Tatu");
 
+
+        applyFontForToolbarTitle(this);
         _signupButton = (Button) findViewById(R.id.btn_signup);
+        _signupButton.setTypeface(mTfLight);
         _email = (EditText) findViewById(R.id.email);
+        _email.setTypeface(mTfLight);
         _password = (EditText) findViewById(R.id.input_password);
+        _password.setTypeface(mTfLight);
         _confirm = (EditText) findViewById(R.id.confirm_password);
+        _confirm.setTypeface(mTfLight);
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,8 +97,8 @@ public class Registration extends AppCompatActivity {
         progressDialog.show();
 
 
-        // TODO: Implement your own signup logic here.
-//        CreateAccount();
+        // TODO: signup.
+
         createAcc();
         new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -105,7 +121,6 @@ public class Registration extends AppCompatActivity {
     }
 
     public void onSignupFailed() {
-//        Toast.makeText(getBaseContext(), "Creating Patient failed", Toast.LENGTH_LONG).show();
 
         _signupButton.setEnabled(true);
     }
@@ -131,16 +146,6 @@ public class Registration extends AppCompatActivity {
             _confirm.setError(null);
         }
 
-//        if (confirm != password) {
-//            _confirm.setError("passwords not matching");
-//            _password.setError("passwords not matching");
-//
-//            valid = false;
-//        } else {
-//            _confirm.setError(null);
-//        }
-
-
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _email.setError("input a valid email");
             valid = false;
@@ -151,71 +156,6 @@ public class Registration extends AppCompatActivity {
         return valid;
     }
 
-    private void CreateAccount() {
-        // Toast.makeText(getBaseContext(), "Inside function!", Toast.LENGTH_SHORT).show();
-        JSONObject finalJS = new JSONObject();
-        try {
-
-            finalJS.put("password", _password.getText().toString());
-            finalJS.put("username", _email.getText().toString());
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("JSONErrorin serializing", e.toString());
-        }
-        Log.e("JSON serializing", finalJS.toString());
-        String tag_string_req = "req_Categories";
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(
-                Request.Method.POST, MyShortcuts.baseURL() + "twiga/auth/signup", finalJS,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.e("Response from server is", response.toString());
-                        try {
-                            String status = response.getString("success");
-                            if (status.equals("true")) {
-                                Toast.makeText(getBaseContext(), "You have successfully registered!", Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(getBaseContext(), MainActivity.class);
-
-                                startActivity(intent);
-                            } else {
-                                MyShortcuts.showToast(response.getString("message"), getBaseContext());
-                            }
-                        } catch (JSONException e) {
-                            // JSON error
-                            e.printStackTrace();
-                            Toast.makeText(getBaseContext(), "Server errror, Try again later", Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d("VolleyError", "Error: " + error.getMessage());
-//                hideProgressDialog()
-                MyShortcuts.showToast("Check you internet connection or try again later", getBaseContext());
-                Log.d("error volley", error.toString());
-            }
-        }) {
-
-            /**
-             * Passing some request headers
-             * */
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                setRetryPolicy(new DefaultRetryPolicy(5 * DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 0, 0));
-                setRetryPolicy(new DefaultRetryPolicy(0, 0, 0));
-                headers = MyShortcuts.AunthenticationHeaders(getBaseContext());
-                return headers;
-            }
-        };
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(jsonObjReq);
-        Log.e("request is", jsonObjReq.toString());
-    }
 
     public void createAcc() {
         Post.PostString(MyShortcuts.baseURL() + "twiga/auth/signup", _email.getText().toString(),_password.getText().toString(), new Response.Listener<String>() {

@@ -35,7 +35,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class RadarChartActivitry extends DemoBase {
+public class RadarChartActivitry extends Base {
 
     private RadarChart mChart;
 
@@ -50,22 +50,18 @@ public class RadarChartActivitry extends DemoBase {
         tv.setTypeface(mTfLight);
         tv.setTextColor(Color.WHITE);
         tv.setBackgroundColor(Color.rgb(60, 65, 82));
-
         mChart = (RadarChart) findViewById(R.id.chart1);
         mChart.setBackgroundColor(Color.rgb(60, 65, 82));
-
         FloatingActionButton floatingActionButton=(FloatingActionButton)findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getBaseContext(),MainActivity.class);
+                Intent intent = new Intent(getBaseContext(),LineChartActivity.class);
                 startActivity(intent);
             }
         });
 //        floatingActionButton.setBackgroundColor(Color.rgb(60, 65, 82));
-
         mChart.getDescription().setEnabled(false);
-
         mChart.setWebLineWidth(1f);
         mChart.setWebColor(Color.LTGRAY);
         mChart.setWebLineWidthInner(1f);
@@ -95,11 +91,11 @@ public class RadarChartActivitry extends DemoBase {
         xAxis.setXOffset(0f);
         xAxis.setValueFormatter(new IAxisValueFormatter() {
 
-            private String[] mActivities = new String[]{"6am", "9am", "12pm", "3pm", "6pm"};
+            private String[] mTimes = new String[]{"6am", "9am", "12pm", "3pm", "6pm"};
 
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                return mActivities[(int) value % mActivities.length];
+                return mTimes[(int) value % mTimes.length];
             }
         });
         xAxis.setTextColor(Color.WHITE);
@@ -273,6 +269,7 @@ public class RadarChartActivitry extends DemoBase {
         mChart.invalidate();
     }
 
+//    TODO Call this functino to get real data from the database
       private void GetData() {
         Post.getData("http://41.204.186.47:8000/twiga/stops/stops", new Response.Listener<String>() {
             @Override
@@ -357,13 +354,13 @@ public class RadarChartActivitry extends DemoBase {
 //        xAxis.setValueFormatter(xValues);
         xAxis.setValueFormatter(new IAxisValueFormatter() {
 
-            //            private String[] mActivities = new String[]{"6am", "9am", "12pm", "3pm", "6pm"};
-            private String[] mActivities = xValues;
+            //            private String[] mTimes = new String[]{"6am", "9am", "12pm", "3pm", "6pm"};
+            private String[] mTimes = xValues;
 
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
                 Log.e("value", value + "");
-                return mActivities[(int) value];
+                return mTimes[(int) value];
 
             }
         });

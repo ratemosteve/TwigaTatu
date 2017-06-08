@@ -12,11 +12,7 @@ import com.github.mikephil.charting.utils.MPPointF;
 
 import java.text.DecimalFormat;
 
-/**
- * Custom implementation of the MarkerView.
- * 
- * @author Philipp Jahoda
- */
+
 public class RadarMarkerView extends MarkerView {
 
     private TextView tvContent;

@@ -3,6 +3,7 @@ package com.digitalmatatus.twigatatu;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
@@ -31,6 +32,8 @@ import java.util.Map;
 import co.ceryle.radiorealbutton.library.RadioRealButton;
 import co.ceryle.radiorealbutton.library.RadioRealButtonGroup;
 
+import static com.digitalmatatus.twigatatu.Login.applyFontForToolbarTitle;
+
 public class Conditions extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
 
     private RadioRealButton button1, button2, button3, button4, button5, button6, button7, button8, button9, button10;
@@ -43,6 +46,10 @@ public class Conditions extends AppCompatActivity implements TimePickerDialog.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.appbar_conditions);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("Twiga Tatu");
+        applyFontForToolbarTitle(this);
         getData2();
         editText=(EditText)findViewById(R.id.inputSearchEditText);
 
@@ -155,7 +162,7 @@ public class Conditions extends AppCompatActivity implements TimePickerDialog.On
             @Override
             public void onClick(View view) {
 //                postFare();
-                Intent intent = new Intent(getBaseContext(),LineChartActivity.class);
+                Intent intent = new Intent(getBaseContext(),RadarChartActivitry.class);
                 startActivity(intent);
             }
         });
@@ -229,8 +236,8 @@ public class Conditions extends AppCompatActivity implements TimePickerDialog.On
                 Log.e("Getting data error", "Error: " + error.getMessage());
 //                Log.e("Url is", MyShortcuts.baseURL() + "cargo_handling/api/login/?" + "username=" + username + "&password=" + password);
 
-                Toast.makeText(getApplicationContext(),
-                        "Check your credentials or internet connectivity!", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(),
+//                        "Check your credentials or internet connectivity!", Toast.LENGTH_LONG).show();
 //                loginUser(username,password);
 //                hideDialog();
             }
@@ -310,8 +317,8 @@ public class Conditions extends AppCompatActivity implements TimePickerDialog.On
                 Log.e("Getting data error", "Error: " + error.getMessage());
 //                Log.e("Url is", MyShortcuts.baseURL() + "cargo_handling/api/login/?" + "username=" + username + "&password=" + password);
 
-                Toast.makeText(getApplicationContext(),
-                        "Check your credentials or internet connectivity!", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(),
+//                        "Check your credentials or internet connectivity!", Toast.LENGTH_LONG).show();
 //                loginUser(username,password);
 //                hideDialog();
             }

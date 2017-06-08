@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -70,6 +72,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.digitalmatatus.twigatatu.Login.applyFontForToolbarTitle;
+
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnActivityUpdatedListener, OnGeofencingTransitionListener, OnLocationUpdatedListener {
 
@@ -78,11 +82,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private String latitude = "", longitude = "";
     private LocationManager locationManager;
     LocationListener locationListener;
-    private static Context ctx, context;
     private GoogleApiClient googleApiClient;
     boolean gps_enabled = false;
     private static final int REQUEST_FINE_LOCATION = 0;
-
+    protected Typeface mTfRegular;
+    protected Typeface mTfLight;
     TextView _location, fare;
     ProgressDialog progressDialog;
     private EditText input;
@@ -97,11 +101,26 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        Setting up custom font
+        mTfRegular = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
+        mTfLight = Typeface.createFromAsset(getAssets(), "OpenSans-Light.ttf");
         setContentView(R.layout.appbar_main);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("Twiga Tatu");
+        applyFontForToolbarTitle(this);
         _location = (TextView) findViewById(R.id.location);
+        _location.setTypeface(mTfLight);
         fare = (TextView) findViewById(R.id.fare);
+        fare.setTypeface(mTfLight);
+        TextView title = (TextView) findViewById(R.id.title);
+        title.setTypeface(mTfLight);
         dest = (EditText) findViewById(R.id.stop_to);
+        dest.setTypeface(mTfLight);
         source = (EditText) findViewById(R.id.stop_from);
+        source.setTypeface(mTfLight);
         DiscreteSeekBar discreteSeekBar1 = (DiscreteSeekBar) findViewById(R.id.discrete3);
         discreteSeekBar1.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
@@ -122,13 +141,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-       /* discreteSeekBar1.setNumericTransformer(new DiscreteSeekBar.NumericTransformer() {
-            @Override
-            public int transform(int value) {
-                return value * 100;
-            }
-        });*/
+
         Button button = (Button) findViewById(R.id.submit_fare);
+        button.setTypeface(mTfLight);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,28 +161,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             }
         });
-        /*showPermissionDialog();
-
-        if (MyShortcuts.hasInternetConnected(this)) {
-            getLocation();
-
-        }*/
 
 
-       /* DiscreteSeekBar discreteSeekBar1 = (DiscreteSeekBar) findViewById(R.id.discrete1);
-        discreteSeekBar1.setNumericTransformer(new DiscreteSeekBar.NumericTransformer() {
-            @Override
-            public int transform(int value) {
-                return value * 100;
-            }
-        });
-*/
-        // Example of a call to a native method
-   /* TextView tv = (TextView) findViewById(R.id.sample_text);
-    tv.setText(stringFromJNI());*/
+
+
     }
 
-
+//    TODO If the project would require getting location of the user, use the below code
+/*
+* This function leverages on using both GPS and Network Provided location.
+* If it realises that you have turned off your data, It will try to get you location using the GPS,
+* otherwise it obtains the location data using the Network provider
+*
+* */
     private void getLocation() {
         if (checkPermission(getBaseContext())) {
             progressDialog = new ProgressDialog(MainActivity.this,
@@ -390,16 +396,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
 
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-    }
 
     public void showAlert() {
         AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
@@ -412,9 +409,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         input.setTextColor(color);
         input.setHintTextColor(color);
         alert.setView(input);
-
-
-        // Set an EditText view to get user input
 
 
         alert.setPositiveButton("Proceed",

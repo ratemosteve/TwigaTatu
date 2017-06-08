@@ -204,7 +204,8 @@
             android:layout_marginBottom="24dp"
             android:layout_marginTop="24dp"
             android:padding="12dp"
-            android:text="SUBMIT" />
+            android:text="SUBMIT"
+            android:background="@color/colorAccent"/>
 
 
     </LinearLayout>

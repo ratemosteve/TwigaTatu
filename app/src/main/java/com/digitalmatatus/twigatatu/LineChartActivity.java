@@ -1,7 +1,6 @@
 
 package com.digitalmatatus.twigatatu;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Typeface;
@@ -24,7 +23,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.digitalmatatus.twigatatu.model.AppController;
 import com.digitalmatatus.twigatatu.model.MyShortcuts;
-import com.digitalmatatus.twigatatu.model.Post;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -44,16 +42,12 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.Utils;
 
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LineChartActivity extends DemoBase implements OnSeekBarChangeListener,
+public class LineChartActivity extends Base implements OnSeekBarChangeListener,
         OnChartGestureListener, OnChartValueSelectedListener {
 
     private LineChart mChart;

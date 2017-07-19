@@ -41,7 +41,6 @@ public class FareVisualization extends AppCompatActivity {
             mProgressDialog.setCancelable(false);
             mProgressDialog.show();*/
 
-//            spinner.setItems("Room 1", "Room 2", "Room 3", "Room 4", "Presidential Room®");
 //            getStops();
         } else {
             MyShortcuts.showToast("Please turn on your data connection!", getBaseContext());

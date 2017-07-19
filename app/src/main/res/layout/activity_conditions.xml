@@ -27,6 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:layout_marginTop="30dp"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
@@ -51,14 +52,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <ImageView
+                <!--<ImageView
                     android:layout_marginTop="60dp"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:background="@color/pink"
                     android:src="@mipmap/logo_giraffe"
-                    android:layout_gravity="center_horizontal"/>
-
+                    android:layout_gravity="center_horizontal"/>-->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -105,6 +105,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:textAlignment="center"
+                    android:layout_marginStart="20dp"
                     android:text="Select Fare Conditions Below" />
 
 
@@ -112,6 +115,7 @@
                     android:id="@+id/group1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
                     app:rrbg_backgroundColor="@android:color/transparent"
                     app:rrbg_borderColor="@color/pink_300"
                     app:rrbg_borderSize="1dp"

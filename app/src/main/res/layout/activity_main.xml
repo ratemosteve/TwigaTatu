@@ -33,14 +33,6 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context=".MainActivity">
 
-        <ImageView
-            android:layout_marginTop="60dp"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:background="@color/pink"
-            android:src="@mipmap/logo_giraffe"
-            android:layout_gravity="center_horizontal"/>
-
 
         <ScrollView
             android:layout_width="match_parent"
@@ -51,14 +43,23 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="60dp"
+                    android:background="@color/pink"
+                    android:src="@mipmap/logo_giraffe" />
+
+
                 <TextView
+                    android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:text="Please Select Your Fare"
-                    android:id="@+id/title"
-                    android:textSize="20dp"
-                    android:textAlignment="center"/>
+                    android:textAlignment="center"
+                    android:textSize="20dp" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -101,12 +102,19 @@
                     android:layout_marginBottom="8dp"
                     android:layout_marginTop="8dp">
 
-                    <EditText
+                    <!--<EditText
                         android:id="@+id/stop_from"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Type your start location name"
-                        android:inputType="text" />
+                        android:inputType="text" />-->
+
+                    <AutoCompleteTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/stop_from"
+                        android:inputType="text"
+                        android:hint="Type your location here"/>
                 </android.support.design.widget.TextInputLayout>
 
 
@@ -116,12 +124,18 @@
                     android:layout_marginBottom="8dp"
                     android:layout_marginTop="8dp">
 
-                    <EditText
+                    <!--<EditText
                         android:id="@+id/stop_to"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Type your destination point name"
-                        android:inputType="text" />
+                        android:inputType="text" />-->
+                    <AutoCompleteTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/stop_to"
+                        android:inputType="text"
+                        android:hint="Type your location here"/>
                 </android.support.design.widget.TextInputLayout>
                 <!--<android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"

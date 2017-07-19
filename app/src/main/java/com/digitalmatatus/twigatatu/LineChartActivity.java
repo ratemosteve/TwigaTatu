@@ -61,8 +61,8 @@ public class LineChartActivity extends Base implements OnSeekBarChangeListener,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.appbar_linechart);
         getData();
-        tvX = (TextView) findViewById(R.id.tvXMax);
-        tvY = (TextView) findViewById(R.id.tvYMax);
+        tvX = (TextView) findViewById(R.id.tvXMax);//18
+        tvY = (TextView) findViewById(R.id.tvYMax);//73
 
         mSeekBarX = (SeekBar) findViewById(R.id.seekBar1);
         mSeekBarY = (SeekBar) findViewById(R.id.seekBar2);
@@ -111,6 +111,7 @@ public class LineChartActivity extends Base implements OnSeekBarChangeListener,
 
         XAxis xAxis = mChart.getXAxis();
         xAxis.enableGridDashedLine(10f, 1f, 0f);
+
 //        xAxis.setValueFormatter(new MyCustomXAxisValueFormatter());
         //xAxis.addLimitLine(llXAxis); // add x-axis limit line
 
@@ -549,18 +550,6 @@ public class LineChartActivity extends Base implements OnSeekBarChangeListener,
 //                hideDialog();
             }
         }) {
-           /* @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                setRetryPolicy(new DefaultRetryPolicy(5* DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 0, 0));
-                setRetryPolicy(new DefaultRetryPolicy(0, 0, 0));
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String creds = String.format("%s:%s",username,password);
-                Log.e("pass",password);
-                String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
-                headers.put("Authorization", auth);
-                return headers;
-            }*/
 
             @Override
             protected Map<String, String> getParams() {

@@ -19,6 +19,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -29,6 +33,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.digitalmatatus.twigatatu.model.AppController;
 import com.digitalmatatus.twigatatu.model.MyShortcuts;
+import com.digitalmatatus.twigatatu.model.Post;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.DetectedActivity;
@@ -64,6 +69,7 @@ import io.nlopez.smartlocation.location.providers.LocationGooglePlayServicesProv
 
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -92,10 +98,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private EditText input;
     private static AlertDialog.Builder alert;
     private LocationGooglePlayServicesProvider provider;
+    private AutoCompleteTextView stop_from, stop_to;
 
     private EditText dest;
     private EditText source;
-    private int amnt=0;
+    private int amnt = 0;
 
 
     @Override
@@ -117,10 +124,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         fare.setTypeface(mTfLight);
         TextView title = (TextView) findViewById(R.id.title);
         title.setTypeface(mTfLight);
-        dest = (EditText) findViewById(R.id.stop_to);
+      /*  dest = (EditText) findViewById(R.id.stop_to);
         dest.setTypeface(mTfLight);
         source = (EditText) findViewById(R.id.stop_from);
-        source.setTypeface(mTfLight);
+        source.setTypeface(mTfLight);*/
+
+        stop_from = (AutoCompleteTextView) findViewById(R.id.stop_from);
+        stop_from.setTypeface(mTfLight);
+        stop_to = (AutoCompleteTextView) findViewById(R.id.stop_to);
+        stop_to.setTypeface(mTfLight);
         DiscreteSeekBar discreteSeekBar1 = (DiscreteSeekBar) findViewById(R.id.discrete3);
         discreteSeekBar1.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
             @Override
@@ -148,26 +160,24 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getBaseContext(), Conditions.class);
-                intent.putExtra("stops_to", dest.getText().toString());
-                intent.putExtra("stops_from", source.getText().toString());
-                intent.putExtra("amount", amnt+"");
-                Log.e("amount is",amnt+"");
+                intent.putExtra("stops_to", stop_to.getText().toString());
+                intent.putExtra("stops_from", stop_from.getText().toString());
+                intent.putExtra("amount", amnt + "");
+                Log.e("amount is", amnt + "");
 
-                if (amnt > 0) {
+                if (amnt > 0 && !stop_to.getText().toString().isEmpty() && !stop_from.getText().toString().isEmpty()) {
                     startActivity(intent);
                 } else {
-                    MyShortcuts.showToast("Please select a fare amount", getBaseContext());
+                    MyShortcuts.showToast("Please fill all the fields", getBaseContext());
                 }
 
             }
         });
 
 
-
-
     }
 
-//    TODO If the project would require getting location of the user, use the below code
+    //    TODO If the project would require getting location of the user, use the below code
 /*
 * This function leverages on using both GPS and Network Provided location.
 * If it realises that you have turned off your data, It will try to get you location using the GPS,
@@ -395,7 +405,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         }
     }
-
 
 
     public void showAlert() {
@@ -765,4 +774,53 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         alert.show();
     }
+
+//Function for getting stops and using them for autoreply
+    private void getStops() {
+        Post.getData(MyShortcuts.baseURL() + "twiga/stops/stops", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray stops = jsonObject.getJSONArray("stops");
+                    ArrayList<String> stopList = new ArrayList<>();
+
+                    for (int i = 0; i < stops.length(); i++) {
+                        stopList.add(stops.getJSONObject(i).getString("stop_name"));
+                    }
+
+                    final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getBaseContext(),
+                            android.R.layout.simple_dropdown_item_1line, stopList);
+                    stop_from.setAdapter(adapter);
+                    stop_to.setAdapter(adapter);
+
+                    stop_from.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            in.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
+
+                            Log.e("stop_from is",   adapter.getItem(position).toString());
+                        }
+                    });
+
+                    stop_to.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            in.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
+
+                            Log.e("stop_to is",   adapter.getItem(position).toString());
+                        }
+                    });
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+
 }

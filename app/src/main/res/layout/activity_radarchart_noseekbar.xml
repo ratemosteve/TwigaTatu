@@ -3,9 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#3C4252"
+    android:background="#005000"
     android:orientation="vertical">
-
+<!--#3C4252-->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -28,6 +28,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_media_next"
-        android:background="#606582"/>
+        android:background="#005000"/>
+    <!--#606582-->
 
 </LinearLayout>

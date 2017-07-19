@@ -81,7 +81,7 @@ public class Registration extends AppCompatActivity {
     }
 
     public void signup() {
-        Log.d(TAG, "Signup");
+        Log.e(TAG, "Signup");
 
         if (!validate()) {
             onSignupFailed();
@@ -98,6 +98,7 @@ public class Registration extends AppCompatActivity {
 
 
         // TODO: signup.
+        Log.e(TAG, "going to sign up");
 
         createAcc();
         new android.os.Handler().postDelayed(
@@ -134,19 +135,19 @@ public class Registration extends AppCompatActivity {
 
 
         if (password.isEmpty() || password.length() < 6) {
-            _password.setError("Input password");
+            _password.setError("Input password and must be greater than 6 characters");
             valid = false;
         } else {
             _password.setError(null);
         }
         if (confirm.isEmpty() || password.length() < 6) {
-            _confirm.setError("Confirm password");
+            _confirm.setError("Confirm password and must be greater than 6 charactes");
             valid = false;
         } else {
             _confirm.setError(null);
         }
 
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (email.isEmpty()) {
             _email.setError("input a valid email");
             valid = false;
         } else {
@@ -158,15 +159,21 @@ public class Registration extends AppCompatActivity {
 
 
     public void createAcc() {
-        Post.PostString(MyShortcuts.baseURL() + "twiga/auth/signup", _email.getText().toString(),_password.getText().toString(), new Response.Listener<String>() {
+        Log.e("url is", MyShortcuts.baseURL() + "twiga/auth/signup");
+        Post.PostString(MyShortcuts.baseURL() + "twiga/auth/signup", _email.getText().toString(), _password.getText().toString(), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.e("data is", response.toString());
                 try {
+
+
                     JSONObject jsonObject = new JSONObject(response);
-                    MyShortcuts.setDefaults("user_id",jsonObject.getString("user_id"),getBaseContext());
-                    Intent intent = new Intent(getBaseContext(),Login.class);
-                    startActivity(intent);
+                    if (jsonObject.getString("success").equals("true")) {
+                        MyShortcuts.setDefaults("user_id", jsonObject.getString("user_id"), getBaseContext());
+                        Intent intent = new Intent(getBaseContext(), Login.class);
+                        startActivity(intent);
+                    }
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();

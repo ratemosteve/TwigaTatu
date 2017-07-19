@@ -1,9 +1,7 @@
 package com.digitalmatatus.twigatatu.model;
 
-import android.content.Intent;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -12,13 +10,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
-import com.digitalmatatus.twigatatu.MainActivity;
-import com.digitalmatatus.twigatatu.RadarChartActivitry;
-import com.digitalmatatus.twigatatu.model.AppController;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -215,7 +209,7 @@ public class Post {
 
                         MyShortcuts.setDefaults("user_id", session, getBaseContext());
                         MyShortcuts.set(_emailText.getText().toString(), _passwordText.getText().toString(), getBaseContext());
-                        Intent intent = new Intent(getApplicationContext(), RadarChartActivitry.class);
+                        Intent intent = new Intent(getApplicationContext(), RadarChartActivity.class);
                         intent.putExtra("user_id", session);
                         startActivity(intent);
                     } else {

@@ -23,13 +23,21 @@ import com.android.volley.toolbox.StringRequest;
 import com.digitalmatatus.twigatatu.model.AppController;
 import com.digitalmatatus.twigatatu.model.MyShortcuts;
 import com.digitalmatatus.twigatatu.model.Post;
+import com.mukeshsolanki.sociallogin.twitter.TwitterHelper;
+import com.mukeshsolanki.sociallogin.twitter.TwitterListener;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterCore;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+
+import io.fabric.sdk.android.DefaultLogger;
+import io.fabric.sdk.android.Fabric;
 
 import static com.digitalmatatus.twigatatu.model.MyShortcuts.getDefaults;
 
@@ -48,7 +56,7 @@ public class Login extends AppCompatActivity {
     TextView _signupLink;
     protected Typeface mTfRegular;
     protected Typeface mTfLight;
-
+    private TwitterHelper mTwitter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,7 +71,24 @@ public class Login extends AppCompatActivity {
         setSupportActionBar(toolbar);
         setTitle("Twiga Tatu");
         applyFontForToolbarTitle(this);
+/*
+//       Fabric.with(this, new Crashlytics());
+        TwitterAuthConfig authConfig =  new TwitterAuthConfig(
+                "9I1luYw65EgtvOlHgHKmZrDIb",
+                "fVIEuVnnREr8Mf7XpwnnotmZAalR6w91nY8xyPojA7FrurtpVw");
 
+
+//        Fabric.with(fabric);
+        final Fabric fabric = new Fabric.Builder(this)
+                .kits(new TwitterCore(authConfig))
+                .logger(new DefaultLogger(Log.DEBUG))
+                .debuggable(true)
+                .build();
+
+        Fabric.with(fabric);
+
+        mTwitter = new TwitterHelper(this, this, "9I1luYw65EgtvOlHgHKmZrDIb", "fVIEuVnnREr8Mf7XpwnnotmZAalR6w91nY8xyPojA7FrurtpVw");
+*/
         _signupLink = (TextView) findViewById(R.id.link_signup);
         _emailText = (EditText) findViewById(R.id.input_email);
         _emailText.setTypeface(mTfLight);
@@ -72,14 +97,21 @@ public class Login extends AppCompatActivity {
         _loginButton = (Button) findViewById(R.id.btn_login);
         _loginButton.setTypeface(mTfLight);
 
+        if (MyShortcuts.checkDefaults("user_id", this)) {
+            _emailText.setText(MyShortcuts.getDefaults("username", getBaseContext()));
+            _passwordText.setText(MyShortcuts.getDefaults("password", getBaseContext()));
+
+        }
+
 //        Autorefilling passwords on subsequent login from the sharedPreference
         if (MyShortcuts.checkDefaults("email", this)) {
             _emailText.setText(getDefaults("email", this));
             _passwordText.setText(getDefaults("password", this));
         }
 
+//        _loginButton.setOnClickListener(this);
 
-
+//TODO Using twitter aunthentication instead
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -88,12 +120,12 @@ public class Login extends AppCompatActivity {
                 if (MyShortcuts.hasInternetConnected(getBaseContext())) {
 
 //                     TODO Uncomment to disable demo mode and login using credentials cerated on the server
-//                    login();
+                    login();
 
 //                    Comment below lines to prevent automatic login without credentials
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                  /*  Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     intent.putExtra("user_id", "3");
-                    startActivity(intent);
+                    startActivity(intent);*/
 
                 } else {
                     MyShortcuts.showToast("No internet connection!", getBaseContext());
@@ -101,7 +133,6 @@ public class Login extends AppCompatActivity {
 
             }
         });
-
 
         _signupLink.setTypeface(mTfLight);
         _signupLink.setOnClickListener(new View.OnClickListener() {
@@ -115,6 +146,7 @@ public class Login extends AppCompatActivity {
         });
 
     }
+
 
     public static void applyFontForToolbarTitle(Activity context) {
         Toolbar toolbar = (Toolbar) context.findViewById(R.id.toolbar);
@@ -179,6 +211,8 @@ public class Login extends AppCompatActivity {
 //                this.finish();
             }
         }
+        mTwitter.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @Override
@@ -224,15 +258,19 @@ public class Login extends AppCompatActivity {
     }
 
     public void loginPost() {
-        Post.PostString(MyShortcuts.baseURL() + "twiga/auth/signup", _emailText.getText().toString(),_passwordText.getText().toString(), new Response.Listener<String>() {
+        Post.PostString(MyShortcuts.baseURL() + "twiga/auth/login", _emailText.getText().toString(), _passwordText.getText().toString(), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.e("data is", response.toString());
                 try {
                     JSONObject jsonObject = new JSONObject(response);
-                    MyShortcuts.setDefaults("user_id",jsonObject.getString("user_id"),getBaseContext());
-                    Intent intent = new Intent(getBaseContext(),Login.class);
-                    startActivity(intent);
+                    if (jsonObject.getString("success").equals("true")) {
+                        MyShortcuts.setDefaults("user_id", jsonObject.getString("user_id"), getBaseContext());
+                        MyShortcuts.setDefaults("username", _emailText.getText().toString(), getBaseContext());
+                        MyShortcuts.setDefaults("password", _passwordText.getText().toString(), getBaseContext());
+                        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -241,8 +279,6 @@ public class Login extends AppCompatActivity {
             }
         });
     }
-
-
 
 }
 

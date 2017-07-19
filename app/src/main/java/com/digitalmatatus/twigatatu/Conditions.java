@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -161,9 +160,9 @@ public class Conditions extends AppCompatActivity implements TimePickerDialog.On
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                postFare();
-                Intent intent = new Intent(getBaseContext(),RadarChartActivitry.class);
-                startActivity(intent);
+                postFare();
+                /*Intent intent = new Intent(getBaseContext(),RadarChartActivity.class);
+                startActivity(intent);*/
             }
         });
 
@@ -195,7 +194,7 @@ public class Conditions extends AppCompatActivity implements TimePickerDialog.On
 
             @Override
             public void onResponse(String response) {
-                Log.d("All Data", "response from the server is: " + response.toString());
+                Log.e("All Data", "response from the server is: " + response.toString());
 //                hideDialog();
 
 //                Log.e("Url is",  MyShortcuts.getDefaults("url",getBaseContext()) + "twiga/auth/login?" + "username=" + username + "&password=" + password);
@@ -203,7 +202,7 @@ public class Conditions extends AppCompatActivity implements TimePickerDialog.On
                 try {
                     JSONObject jObj = new JSONObject(response);
 
-                    Intent intent = new Intent(getBaseContext(),RadarChartActivitry.class);
+                    Intent intent = new Intent(getBaseContext(),RadarChartActivity.class);
                     startActivity(intent);
                     /*String success = jObj.getString("success");
                     String session = "";
@@ -259,15 +258,7 @@ public class Conditions extends AppCompatActivity implements TimePickerDialog.On
             protected Map<String, String> getParams() {
                 // Posting params to register url
                 Map<String, String> params = new HashMap<String, String>();
-                /*params.put("stop_from", getIntent().getStringExtra("stop_from"));
-                params.put("stop_to", getIntent().getStringExtra("stop_to"));
-                params.put("amount", getIntent().getStringExtra("amount"));
-                params.put("route", " fs");
-                params.put("weather", weather);
-                params.put("traffic", traffic);
-                params.put("demand", demand);
-                params.put("rush_hour", rush);
-                params.put("peak", peak);*/
+
 
                 params.put("stop_from", "dss");
                 params.put("stop_to", "sds");
@@ -278,6 +269,8 @@ public class Conditions extends AppCompatActivity implements TimePickerDialog.On
                 params.put("demand", "dffd");
                 params.put("rush_hour", "fdvs");
                 params.put("peak", "cvccvc");
+                params.put("user_id","11");
+                params.put("travel_time",editText.getText().toString());
 
 
 
@@ -285,62 +278,6 @@ public class Conditions extends AppCompatActivity implements TimePickerDialog.On
 
 
 
-                return params;
-            }
-
-        };
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
-
-
-
-    private void getData2() {
-        String tag_string_req = "req_login";
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                MyShortcuts.baseURL() + "twiga/budgeting/expenditure", new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.e("All Data", "response from the server is: " + response.toString());
-//                hideDialog();
-
-//                Log.e("Url is",  MyShortcuts.getDefaults("url",getBaseContext()) + "twiga/auth/login?" + "username=" + username + "&password=" + password);
-
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Getting data error", "Error: " + error.getMessage());
-//                Log.e("Url is", MyShortcuts.baseURL() + "cargo_handling/api/login/?" + "username=" + username + "&password=" + password);
-
-//                Toast.makeText(getApplicationContext(),
-//                        "Check your credentials or internet connectivity!", Toast.LENGTH_LONG).show();
-//                loginUser(username,password);
-//                hideDialog();
-            }
-        }) {
-           /* @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                setRetryPolicy(new DefaultRetryPolicy(5* DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 0, 0));
-                setRetryPolicy(new DefaultRetryPolicy(0, 0, 0));
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                String creds = String.format("%s:%s",username,password);
-                Log.e("pass",password);
-                String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
-                headers.put("Authorization", auth);
-                return headers;
-            }*/
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting params to register url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("user_id", "3");
 
                 return params;
             }
@@ -350,6 +287,9 @@ public class Conditions extends AppCompatActivity implements TimePickerDialog.On
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
+
+
+
 
 
 }

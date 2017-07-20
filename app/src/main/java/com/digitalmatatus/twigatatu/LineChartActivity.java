@@ -42,16 +42,24 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.Utils;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LineChartActivity extends Base implements OnSeekBarChangeListener,
+import static com.digitalmatatus.twigatatu.RadarChartActivity.toNearestHourInterval;
+
+public class LineChartActivity extends Base implements
         OnChartGestureListener, OnChartValueSelectedListener {
 
     private LineChart mChart;
-    private SeekBar mSeekBarX, mSeekBarY;
     private TextView tvX, tvY;
 
     @Override
@@ -60,18 +68,10 @@ public class LineChartActivity extends Base implements OnSeekBarChangeListener,
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.appbar_linechart);
-        getData();
+
         tvX = (TextView) findViewById(R.id.tvXMax);//18
         tvY = (TextView) findViewById(R.id.tvYMax);//73
 
-        mSeekBarX = (SeekBar) findViewById(R.id.seekBar1);
-        mSeekBarY = (SeekBar) findViewById(R.id.seekBar2);
-
-        mSeekBarX.setProgress(45);
-        mSeekBarY.setProgress(100);
-
-        mSeekBarY.setOnSeekBarChangeListener(this);
-        mSeekBarX.setOnSeekBarChangeListener(this);
 
         mChart = (LineChart) findViewById(R.id.chart1);
         mChart.setOnChartGestureListener(this);
@@ -151,7 +151,9 @@ public class LineChartActivity extends Base implements OnSeekBarChangeListener,
         //mChart.getViewPortHandler().setMaximumScaleX(2f);
 
         // add data
-        setData(45, 100);
+//        setData(45, 100);
+
+        getData();
 
 //        mChart.setVisibleXRange(20);
 //        mChart.setVisibleYRange(20f, AxisDependency.LEFT);
@@ -175,7 +177,7 @@ public class LineChartActivity extends Base implements OnSeekBarChangeListener,
         super.onWindowFocusChanged(hasFocus);
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.line, menu);
         return true;
@@ -331,8 +333,8 @@ public class LineChartActivity extends Base implements OnSeekBarChangeListener,
         }
         return true;
     }
-
-    @Override
+*/
+    /*@Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
         tvX.setText("" + (mSeekBarX.getProgress() + 1));
@@ -355,7 +357,7 @@ public class LineChartActivity extends Base implements OnSeekBarChangeListener,
         // TODO Auto-generated method stub
 
     }
-
+*/
     private void setData(int count, float range) {
 
         ArrayList<Entry> values = new ArrayList<Entry>();
@@ -494,9 +496,9 @@ public class LineChartActivity extends Base implements OnSeekBarChangeListener,
 //
 //
 //                    for (int i = 0; i < jsonArray.length(); i++) {
-//                        JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+//                        JSONObject dataItem = jsonArray.getJSONObject(i);
 //
-//                        doublers.add(Double.parseDouble(jsonObject1.getString("stop_name")));
+//                        doublers.add(Double.parseDouble(dataItem.getString("stop_name")));
 //
 //                        if (i % 2 == 0) {
 //                            xVal[i] = "6am";
@@ -508,7 +510,7 @@ public class LineChartActivity extends Base implements OnSeekBarChangeListener,
 //                            xVal[i] = "6pm";
 //
 //                        }
-////                        yVal[i] =jsonObject1.getString("count");
+////                        yVal[i] =dataItem.getString("count");
 //
 //                    }
 //
@@ -525,16 +527,144 @@ public class LineChartActivity extends Base implements OnSeekBarChangeListener,
 
     private void getData() {
         String tag_string_req = "req_login";
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                MyShortcuts.baseURL() + "twiga/fares/filteredFares", new Response.Listener<String>() {
+        StringRequest strReq = new StringRequest(Request.Method.GET,
+                MyShortcuts.baseURL() + "twiga/fares/fares", new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
                 Log.e("All Data", "response from the server is: " + response.toString());
 //                hideDialog();
 
-//                Log.e("Url is",  MyShortcuts.getDefaults("url",getBaseContext()) + "twiga/auth/login?" + "username=" + username + "&password=" + password);
+                ArrayList<Entry> values = new ArrayList<Entry>();
 
+                int six = 0, nine = 0, twelve = 0, fifteen = 0, eighteen = 0;
+                float sixA = 0, nineA = 0, twelveA = 0, fifteenA = 0, eighteenA = 0;
+                float fin6 = 0, fin9 = 0, fin12 = 0, fin15 = 0, fin18 = 0;
+
+                /*int sixb = 0, nineb = 0, twelveb = 0, fifteenb = 0, eighteenb = 0;
+                float sixB = 0, nineB = 0, twelveB = 0, fifteenB = 0, eighteenB = 0;
+                float fin6B = 0, fin9B = 0, fin12B = 0, fin15B = 0, fin18B = 0;
+                boolean noData = false;
+*/
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("fares");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+
+                        JSONObject dataItem = jsonArray.getJSONObject(i);
+                        Date travel_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dataItem.getString("travel_time"));
+                        int hour = toNearestHourInterval(travel_time);
+
+                        if (hour == 6) {
+                            six = +1;
+                            sixA = +Float.parseFloat(dataItem.getString("amount"));
+                            fin6 = sixA / six;
+
+                        } else if (hour == 9) {
+                            nine = +1;
+                            nineA = +Float.parseFloat(dataItem.getString("amount"));
+                            fin9 = nineA / nine;
+                        } else if (hour == 12) {
+                            twelve = +1;
+                            twelveA = +Float.parseFloat(dataItem.getString("amount"));
+                            fin12 = twelveA / twelve;
+                        } else if (hour == 15) {
+                            fifteen = +1;
+                            fifteenA = +Float.parseFloat(dataItem.getString("amount"));
+                            fin15 = fifteenA / fifteen;
+                        } else {
+                            eighteen = +1;
+                            eighteenA = +Float.parseFloat(dataItem.getString("amount"));
+                            fin18 = eighteenA / eighteen;
+                        }
+                    }
+
+
+//                    Setting up the average time used
+                    if (sixA!=0){
+                        values.add(new Entry(6, fin6, getResources().getDrawable(R.drawable.star)));
+                    }else{
+                        values.add(new Entry(6, 0, getResources().getDrawable(R.drawable.star)));
+
+                    }
+
+                    if (nineA!=0){
+                        values.add(new Entry(9, fin9, getResources().getDrawable(R.drawable.star)));
+                    }else{
+                        values.add(new Entry(9, 0, getResources().getDrawable(R.drawable.star)));
+
+                    }
+                    if (twelveA!=0){
+                        values.add(new Entry(12, fin6, getResources().getDrawable(R.drawable.star)));
+                    }else{
+                        values.add(new Entry(12, 0, getResources().getDrawable(R.drawable.star)));
+
+                    }
+                    if (fifteenA!=0){
+                        values.add(new Entry(15, fin15, getResources().getDrawable(R.drawable.star)));
+                    }else{
+                        values.add(new Entry(15, 0, getResources().getDrawable(R.drawable.star)));
+
+                    }
+                    if (eighteenA!=0){
+                        values.add(new Entry(18, fin18, getResources().getDrawable(R.drawable.star)));
+                    }else{
+                        values.add(new Entry(18, 0, getResources().getDrawable(R.drawable.star)));
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                LineDataSet set1;
+
+                if (mChart.getData() != null &&
+                        mChart.getData().getDataSetCount() > 0) {
+                    set1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
+                    set1.setValues(values);
+                    mChart.getData().notifyDataChanged();
+                    mChart.notifyDataSetChanged();
+                } else {
+                    // create a dataset and give it a type
+                    set1 = new LineDataSet(values, "Fare Expenditure");
+
+                    set1.setDrawIcons(false);
+
+                    // set the line to be drawn like this "- - - - - -"
+                    set1.enableDashedLine(10f, 5f, 0f);
+                    set1.enableDashedHighlightLine(10f, 5f, 0f);
+                    set1.setColor(Color.BLACK);
+                    set1.setCircleColor(Color.BLACK);
+                    set1.setLineWidth(1f);
+                    set1.setCircleRadius(3f);
+                    set1.setDrawCircleHole(false);
+                    set1.setValueTextSize(9f);
+                    set1.setDrawFilled(true);
+                    set1.setFormLineWidth(1f);
+                    set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+                    set1.setFormSize(15.f);
+
+                    if (Utils.getSDKInt() >= 18) {
+                        // fill drawable only supported on api level 18 and above
+                        Drawable drawable = ContextCompat.getDrawable(getBaseContext(), R.drawable.fade_red);
+                        set1.setFillDrawable(drawable);
+                    } else {
+                        set1.setFillColor(Color.BLACK);
+                    }
+
+                    ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+                    dataSets.add(set1); // add the datasets
+
+                    // create a data object with the datasets
+                    LineData data = new LineData(dataSets);
+
+                    // set data
+                    mChart.setData(data);
+//                Log.e("Url is",  MyShortcuts.getDefaults("url",getBaseContext()) + "twiga/auth/login?" + "username=" + username + "&password=" + password);
+                }
 
             }
         }, new Response.ErrorListener() {
